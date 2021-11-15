@@ -1,99 +1,52 @@
-
 const display = document.querySelector('.display');
-const tds = document.querySelectorAll('.key');
-let keysDigitados = [];
-let calculo = '';
-let contKey = 0;
 
-document.addEventListener('click', function(e) {
-    const elemento = e.target;
-    keysDigitados.push(elemento);
+document.addEventListener('click', e => {
+    const el = e.target;
 
-    if(keysDigitados[0].classList.contains('key-operator')) {
-        keysDigitados.shift();
-        return;
+    if(el.classList.contains('key')) {
+        showOnScreen(el.innerText);
     }
 
-    if(elemento.classList.contains('key-operator')) {
-        contKey++;
-        if (contKey > 1) return;
-    } else {
-        contKey = 0;
+    if(el.classList.contains('key-calcular')) {
+        if(!display.value) return;
+
+        const total = calculate(display.value);
+
+        cleanScreen();
+        showResultOnScreen(total)
     }
 
-    if (elemento.classList.contains('key')) {
-        const valorDoKey = elemento.getAttribute('name');
-
-        calculo += valorDoKey;
-        mostraNoDisplay(calculo);
+    if(el.classList.contains('key-clean-all')) {
+        cleanScreen();
     }
 
-    if (elemento.classList.contains('key-clean')) {
-        limpar();
+    if(el.classList.contains('key-clean')) {
+        cleanOne();
     }
+});
 
-    if (elemento.classList.contains('key-calcular')) {
-        calculo = calcula();
-        display.innerHTML = calculo;
-    }
-})
-
-function limpar() {
-    calculo = '';
-    display.innerHTML = '';
-    keysDigitados = [];
+function showOnScreen(valueKey) {
+    display.value += valueKey;
 }
 
-function mostraNoDisplay() {
-    display.innerHTML = calculo;
+function cleanScreen() {
+    display.value = '';
 }
 
-function convertaString(calculo) {
-    let strNumber = '';
-    const numerosEOperator = [];
-
-    for (let valor of calculo) {
-    
-        if (!Number(valor) && Number(valor) !== 0) {
-            numerosEOperator.push(strNumber);
-            strNumber = '';
-            numerosEOperator.push(valor);
-            continue;
-        } else {
-            strNumber += valor;
-        }
+function calculate(displayValue) {
+    try {
+        const result = eval(displayValue);
+        return result;
+    } catch(error) {
+        alert('Operação inválida, tente novamente.')
     }
-
-    numerosEOperator.push(strNumber);
-
-    return numerosEOperator;
 }
 
-function calcula() {
-    const dadosDoCalculo = convertaString(calculo);
-
-        if (!display.value) return;
-
-        if(dadosDoCalculo[dadosDoCalculo.length -1] === '') return;
-
-        let resultado = Number(dadosDoCalculo[0]);
-
-        for(let i = 0; i < dadosDoCalculo.length ; i += 1) {
-            if (dadosDoCalculo[i] === '+') {
-                resultado += Number(dadosDoCalculo[i + 1]);
-                i++;
-                continue;
-            } else if (dadosDoCalculo[i] === '-') {
-                resultado -= Number(dadosDoCalculo[i + 1]);
-                i++;
-                continue;
-            } else if (dadosDoCalculo[i] === 'x') {
-                resultado *= Number(dadosDoCalculo[i + 1]);
-                i++;
-                continue;
-            }
-        }
-
-    return resultado;
+function showResultOnScreen(total) {
+    if(!total) return;
+    display.value = total;
 }
 
+function cleanOne() {
+    display.value = display.value.slice(0 , display.value.length -1);
+}
