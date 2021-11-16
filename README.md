@@ -42,7 +42,7 @@ The following technologies were used in the mini project:
 
 <br>
 
-<h2 id="testhere">Teste Aqui</h2>
+<h2 id="testhere">Test Here</h2>
 
 <br>
 
